@@ -12,19 +12,21 @@
                                     }                                   
 # 1.11 La fonction qui resume pour un SNPs une seule exposition
 
-   fct_Rsum<-function(dat,outc,vexp,gm,gc,vvaraj,seu=NULL){
+   fct_Rsum<-function(dat,outc,vexp,gm,gc,vvaraj,gma=gm,gca=gc,seu=NULL){
                                             # dat la base de donnÃ©e deja jumÃ©llÃ© au snp
                                             # snp le snp
                                             # la variable d'exposition
                                             # on suppose que la vecteur
                                             # vvaraj : le vecteur des facteur d'ajustement
                                             # qrt la variable qui permet de connaitre si nous sommes dans les seuille en cartile pour binaire
+                                            # gma: variable de génotype de la mère à utiliser dans le modèle de régression
+                                            # gca: variable de génotype de l'enfant à utiliser dans le modèle de régression
                                             # seu : seuil pour la decouper la variable
                                             dat0<-dat[dat[,outc]==0,];vexp0<-dat0[vexp];vexp1<-dat[vexp]
                                             # le cas binaire où on precise le seuil de la variable de dichotomisation
                                                nvar<-cathe_bi(dat,vexp,seu);nvar<-t(t(nvar));nch<-paste(vexp,".","dch",sep="");colnames(nvar)<-nch
                                                                    dat1<-data.frame(dat,nvar)
-                                                                   fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gm,gc),collapse="+"),paste(nch,":",gm,sep=""),paste(nch,":",gc,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))
+                                                                   fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))
                                                                    mod0<-glm(fl0,data=dat1,family=binomial)
                                                                    cof<-coef(mod0)
                                                                    Ic1<-confint(mod0)
