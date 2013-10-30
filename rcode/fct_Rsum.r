@@ -1,3 +1,5 @@
+library(SPmlficmcm)
+
   # 1.9 la fonction des quartiles 
     cathe_bi<-function(dat,var1,seu=NULL){
                                     if(is.null(seu)==TRUE){
@@ -12,7 +14,7 @@
                                     }                                   
 # 1.11 La fonction qui resume pour un SNPs une seule exposition
 
-   fct_Rsum<-function(dat,outc,vexp,gm,gc,vvaraj,gma=gm,gca=gc,seu=NULL){
+   fct_Rsum_CMCM<-function(dat,N,outc,vexp,gm,gc,vvaraj,gma=gm,gca=gc,seu=NULL,typ=2,alpha=0.05){
                                             # dat la base de donnée deja juméllé au snp
                                             # snp le snp
                                             # la variable d'exposition
@@ -27,16 +29,16 @@
                                                nvar<-cathe_bi(dat,vexp,seu);nvar<-t(t(nvar));nch<-paste(vexp,".","dch",sep="");colnames(nvar)<-nch
                                                                    dat1<-data.frame(dat,nvar)
                                                                    fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))
-                                                                   mod0<-glm(fl0,data=dat1,family=binomial)
-                                                                   cof<-coef(mod0)
-                                                                   Ic1<-confint(mod0)
+                                                                   mod0<-Spmlficmcm(fl0,N,gma,gca,DatfE=dat1,typ=typ)
+                                                                   cof<-mod0$MatR["Estimate"]
+                                                                   Ic1<-cbind(cof-qnorm(1-alpha/2)*mod0$MatR["Std.Error"], cof+qnorm(1-alpha/2)*mod0$MatR["Std.Error"])
                                                                    # or et intervalle de confiance pour le model
                                                                    OR<-round(c(1,exp(cof[2])),1)
                                                                    Icor<-rbind(c(0,0),round(exp(Ic1)[2,],1))
                                                                    ty_w<-cbind(OR,Icor)
 
                                                                    # la covariance
-                                                                   mat1<-vcov(mod0);dg<-diag(mat1);
+                                                                   mat1<-mod0$Matv;dg<-diag(mat1);
 
                                                                    # or pour mère
                                                                    n<-length(cof)
@@ -88,3 +90,4 @@
 
                                            return(list(matR=vgm1,model1=mod0))
                                            }
+                                           
