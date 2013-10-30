@@ -10,7 +10,7 @@
  
  #======== les fonction necessaire pour le management des données =============#
  
- # 1.1 la fonction qui transorme le snp de la base g..t ou c..t , etc en une variable qui vaut o,1/2,1 22(valeure manquante) (compte le nombre l'allèle mineur et divise par deux ) 
+ # 1.1 la fonction qui transorme le snp de la base g..t ou c..t , etc en une variable qui vaut o,1/2,1 NA(valeure manquante) (compte le nombre l'allèle mineur et divise par deux ) 
  dec_snp<-function(rsn,dat){
                             # rsn c'est le num rs
                             # dat : la base de donnée
@@ -20,17 +20,17 @@
                             vec<-NULL
                             for(u in bse){vec<-rbind(vec,c(substr(u,1,1),substr(u,3,3)))}
                             
-                            #traitement 1
+                            #traitement all�le 1
                             vid_vec1<-vec[,1]%in%""
                             na_vec1<-vec[,1]%in%"N"
                             maf_vec1<-vec[,1]%in%bs_min
-                            #traitement 1
+                            #traitement all�le 2
                             vid_vec2<-vec[,2]%in%""
                             na_vec2<-vec[,2]%in%"N"
                             maf_vec2<-vec[,2]%in%bs_min
                        
-                            Al1<-ifelse(vid_vec1==TRUE,22,0)+ifelse(na_vec1==TRUE,22,0)+ifelse(maf_vec1==TRUE,1,0)
-                            Al2<-ifelse(vid_vec2==TRUE,22,0)+ifelse(na_vec2==TRUE,22,0)+ifelse(maf_vec2==TRUE,1,0)
+                            Al1<-ifelse(is.na(vec[,1])|vid_vec1==TRUE|na_vec1==TRUE,NA,ifelse(maf_vec1==TRUE,1,0))
+                            Al2<-ifelse(is.na(vec[,1])|vid_vec2==TRUE|na_vec2==TRUE,NA,ifelse(maf_vec2==TRUE,1,0))
                             sap<-(Al1+Al2);snp<-t(t(sap))
                             rsn1<-paste("rs",substr(rsn,3,nchar(rsn)),sep="")
                             tff<-data.frame(snp,bse);nams<-c(rsn1,rsn)
