@@ -65,7 +65,7 @@
                                     Nvtm<-NULL;
                                     for(u in codm){
                                                   if(dim(dat3[dat3$SAMPLE==u,])[1]==0){
-                                                                                       nam<-names(dat3[dat3$SAMPLE==u,]);tt<-data.frame(u,"",22);names(tt)<-nam;
+                                                                                       nam<-names(dat3[dat3$SAMPLE==u,]);tt<-data.frame(u,"",NA);names(tt)<-nam;
                                                                                        Nvtm<-rbind(Nvtm,tt)
                                                                                        }else{
                                                                                              Nvtm<-rbind(Nvtm,dat3[dat3$SAMPLE==u,])
@@ -74,7 +74,7 @@
                                     Nvte<-NULL;
                                     for(v in code){
                                                   if(dim(dat3[dat3$SAMPLE==v,])[1]==0){
-                                                                                       nam<-names(dat3[dat3$SAMPLE==v,]);tt1<-data.frame(v,"",22);names(tt1)<-nam;
+                                                                                       nam<-names(dat3[dat3$SAMPLE==v,]);tt1<-data.frame(v,"",NA);names(tt1)<-nam;
                                                                                        Nvte<-rbind(Nvte,tt1)
                                                                                        }else{
                                                                                              Nvte<-rbind(Nvte,dat3[dat3$SAMPLE==v,])
@@ -110,7 +110,7 @@
                                     Nvtm<-NULL;
                                     for(u in codm){
                                                   if(dim(dat3[dat3$SAMPLE==u,])[1]==0){
-                                                                                       nam<-names(dat3[dat3$SAMPLE==u,]);tt<-data.frame(u,22);names(tt)<-nam;
+                                                                                       nam<-names(dat3[dat3$SAMPLE==u,]);tt<-data.frame(u,NA);names(tt)<-nam;
                                                                                        Nvtm<-rbind(Nvtm,tt)
                                                                                        }else{
                                                                                              if(dim(dat3[dat3$SAMPLE==u,])[1]>1){Nvtm<-rbind(Nvtm,dat3[dat3$SAMPLE==u,][1,])
@@ -121,7 +121,7 @@
                                     Nvte<-NULL;
                                     for(v in code){
                                                   if(dim(dat3[dat3$SAMPLE==v,])[1]==0){
-                                                                                       nam<-names(dat3[dat3$SAMPLE==v,]);tt1<-data.frame(v,22);names(tt1)<-nam;
+                                                                                       nam<-names(dat3[dat3$SAMPLE==v,]);tt1<-data.frame(v,NA);names(tt1)<-nam;
                                                                                        Nvte<-rbind(Nvte,tt1)
                                                                                        }else{
                                                                                              if(dim(dat3[dat3$SAMPLE==v,])>1){
@@ -159,7 +159,7 @@
                             datf1<-data.frame(datf,test)
                             return(datf1)
                             }
-# 1.4 la fonction qui effectue le merge sur les données d'expossion
+# 1.4 la fonction qui effectue le merge sur les données d'exposition
 
   fct_mergtt<-function(dat1,dat2,rsn,datz){
                                            # dat1 est la data.frame qui provient de la fonction TRansf_tab et rsn le nom du snp
@@ -196,7 +196,7 @@
                                            i=1;
                                            for(ss in vec.rsn){tab<-fct_mergtt(dat1,dat2,ss,datz)
                                                               vargme<-paste("gme_rs",substr(ss,3,nchar(ss)),sep="")
-                                                              tab1<-tab[tab[vargme]<3,]
+                                                              tab1<-tab[!is.na(tab[vargme]),]
                                                               listSNP[[i]]<-tab1[tab1["test"]!=90,];i=i+1}
                                            names(listSNP)<-vec.rsn
                                            return(listSNP)
@@ -212,9 +212,8 @@
                                            for(ss in vec.rsn){tab<-fct_mergtt(dat1,dat2,ss,datz)
                                                               vargme<-paste("gme_rs",substr(ss,3,nchar(ss)),sep="")
                                                               vargen<-paste("gen_rs",substr(ss,3,nchar(ss)),sep="")
-                                                              tab1<-tab[tab[vargme]<3,] 
-                                                              tab2<-tab1[tab1[vargen]<3,]
-                                                              listSNP[[i]]<-tab2[tab2["test"]!=90,];i=i+1}
+                                                              tab1<-tab[!is.na(tab[vargme])&!is.na(tab[vargen]),]
+                                                              listSNP[[i]]<-tab1[tab1["test"]!=90,];i=i+1}
                                            names(listSNP)<-vec.rsn
                                            return(listSNP)
                                            }
