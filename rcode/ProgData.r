@@ -148,10 +148,14 @@
   Test_geno<-function(datf){
                             #datf : l'objet de la fonction "mere_enf" 
                             fct_test<-function(v){
-                                                 # v : vecteur
-                                                 gm<-v[1];ge<-v[2];va<-1 
+                                                  va<-1
+                                                 # v : vecteur ne doit pas contenir de données manquantes
+                                                 if (all(!is.na(v)))
+                                                 { 
+                                                 gm<-v[1];ge<-v[2]; 
                                                  if(gm==0 & ge==2){va<-90}
                                                  if(gm==2 & ge==0){va<-90}
+                                                 }
                                                  return(va)
                                                  }
                             v1<-datf[,5];v2<-datf[,7];
@@ -194,7 +198,9 @@
                                            # datz : data.frame des covariable 
                                            listSNP<-list()
                                            i=1;
-                                           for(ss in vec.rsn){tab<-fct_mergtt(dat1,dat2,ss,datz)
+                                           for(ss in vec.rsn){ # debugging code
+                                                              print(ss)
+                                                              tab<-fct_mergtt(dat1,dat2,ss,datz)
                                                               vargme<-paste("gme_rs",substr(ss,3,nchar(ss)),sep="")
                                                               tab1<-tab[!is.na(tab[vargme]),]
                                                               listSNP[[i]]<-tab1[tab1["test"]!=90,];i=i+1}
