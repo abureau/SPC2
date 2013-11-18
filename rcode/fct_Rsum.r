@@ -29,7 +29,10 @@ library(SPmlficmcm)
                                                nvar<-cathe_bi(dat,vexp,seu);nvar<-t(t(nvar));nch<-paste(vexp,".","dch",sep="");colnames(nvar)<-nch
                                                                    dat1<-data.frame(dat,nvar)
                                                                    fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))
-                                                                   mod0<-Spmlficmcm(fl0,N,gma,gca,DatfE=dat1,typ=typ)
+                                                                   mod0<-try(Spmlficmcm(fl0,N,gma,gca,DatfE=dat1,typ=typ))
+                                                                   if (inherits(mod0,"try-error"))  vgm1=NA
+                                                                   else
+                                                                     {
                                                                    cof<-mod0$MatR["Estimate"]
                                                                    Ic1<-cbind(cof-qnorm(1-alpha/2)*mod0$MatR["Std.Error"], cof+qnorm(1-alpha/2)*mod0$MatR["Std.Error"])
                                                                    # or et intervalle de confiance pour le model
@@ -87,7 +90,7 @@ library(SPmlficmcm)
                                                                    nnr<-c(paste(substr(gm,5,nchar(gm)),"_","Q1",sep=""),paste(substr(gm,5,nchar(gm)),"_","Q2",sep=""))
                                                                    colnames(vgm1)<-nnc
                                                                    rownames(vgm1)<-nnr
-
+                                                                      }
                                            return(list(matR=vgm1,model1=mod0))
                                            }
                                            
