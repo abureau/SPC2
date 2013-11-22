@@ -28,13 +28,18 @@ library(SPmlficmcm)
                                             # le cas binaire où on precise le seuil de la variable de dichotomisation
                                                nvar<-cathe_bi(dat,vexp,seu);nvar<-t(t(nvar));nch<-paste(vexp,".","dch",sep="");colnames(nvar)<-nch
                                                                    dat1<-data.frame(dat,nvar)
+                                                                   # code de débuggage
+                                                                   #print(names(dat1))
+                                                                   #print(gma)
+                                                                   #print(gca)
                                                                    fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))
                                                                    mod0<-try(Spmlficmcm(fl0,N,gma,gca,DatfE=dat1,typ=typ))
                                                                    if (inherits(mod0,"try-error"))  vgm1=NA
                                                                    else
                                                                      {
-                                                                   cof<-mod0$MatR["Estimate"]
-                                                                   Ic1<-cbind(cof-qnorm(1-alpha/2)*mod0$MatR["Std.Error"], cof+qnorm(1-alpha/2)*mod0$MatR["Std.Error"])
+                                                                   cof<-mod0$MatR[colnames(mod0$MatR)=="Estimate"]
+                                                                   et<-mod0$MatR[,colnames(mod0$MatR)=="Std.Error"]
+                                                                   Ic1<-cbind(cof-qnorm(1-alpha/2)*et, cof+qnorm(1-alpha/2)*et)
                                                                    # or et intervalle de confiance pour le model
                                                                    OR<-round(c(1,exp(cof[2])),1)
                                                                    Icor<-rbind(c(0,0),round(exp(Ic1)[2,],1))
