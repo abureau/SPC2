@@ -1,20 +1,22 @@
 library(SPmlficmcm)
 
-  # 1.9 la fonction des quartiles 
-    cathe_bi<-function(dat,var1,seu=NULL){
-                                    if(is.null(seu)==TRUE){
+ # 1.9 la fonction qui transforme une variable continue en binaire (bis)
+    cathe_bi2<-function(dat,outc=NULL,var1,seu=NULL,quant=0.75){
+                                    # outcome : la variable d'interÃªt 
+                                    dat0<-dat[dat[,outc]==0,];var0<-dat0[,var1]
+                                    if(is.null(seu)){
                                                            var<-dat[,var1]
-                                                           seu=quantile(var,probs=c(0.75),na.rm =TRUE)
+                                                           seu=quantile(var0,probs=quant,na.rm =TRUE)
                                                            qrt1<-ifelse(var>=seu,1,0)+ifelse(is.na(var)==TRUE,NA,0)
                                                            }else{
                                                            var<-dat[,var1]
                                                            qrt1<-ifelse(var>=seu,1,0)+ifelse(is.na(var)==TRUE,NA,0)
                                                            }
                                     return(qrt1)
-                                    }                                   
+                                    }                                 
 # 1.11 La fonction qui resume pour un SNPs une seule exposition
 
-   fct_Rsum_CMCM<-function(dat,N,outc,vexp,gm,gc,vvaraj,gma=gm,gca=gc,seu=NULL,typ=2,alpha=0.05){
+   fct_Rsum_CMCM<-function(dat,N,outc,vexp,gm,gc,vvaraj,gma=gm,gca=gc,seu=NULL,quant=0.75,typ=2,alpha=0.05){
                                             # dat la base de donnÃ©e deja jumÃ©llÃ© au snp
                                             # snp le snp
                                             # la variable d'exposition
@@ -24,9 +26,8 @@ library(SPmlficmcm)
                                             # gma: variable de génotype de la mère à utiliser dans le modèle de régression
                                             # gca: variable de génotype de l'enfant à utiliser dans le modèle de régression
                                             # seu : seuil pour la decouper la variable
-                                            dat0<-dat[dat[,outc]==0,];vexp0<-dat0[vexp];vexp1<-dat[vexp]
                                             # le cas binaire où on precise le seuil de la variable de dichotomisation
-                                               nvar<-cathe_bi(dat,vexp,seu);nvar<-t(t(nvar));nch<-paste(vexp,".","dch",sep="");colnames(nvar)<-nch
+                                               nvar<-cathe_bi2(dat,outc,vexp,seu,quant);nvar<-t(t(nvar));nch<-paste(vexp,".","dch",sep="");colnames(nvar)<-nch
                                                                    dat1<-data.frame(dat,nvar)
                                                                    # code de débuggage
                                                                    #print(names(dat1))
@@ -50,25 +51,25 @@ library(SPmlficmcm)
 
                                                                    # or pour mÃ¨re
                                                                    n<-length(cof)
-                                                                   orjm<-c(1,exp(cof[2]+cof[n-1]));orjme<-round(orjm,1)
-                                                                   Intm_inf=c(0,round(orjm[2]*exp(-1.96*sqrt(dg[2]+dg[n-1]+2*mat1[n-1,2])),1))
-                                                                   Intm_sup=c(0,round(orjm[2]*exp(1.96*sqrt(dg[2]+dg[n-1]+2*mat1[n-1,2])),1))
+                                                                   orjm<-c(1,exp(cof[2]+cof[n-2]));orjme<-round(orjm,1)
+                                                                   Intm_inf=c(0,round(orjm[2]*exp(-1.96*sqrt(dg[2]+dg[n-2]+2*mat1[n-2,2])),1))
+                                                                   Intm_sup=c(0,round(orjm[2]*exp(1.96*sqrt(dg[2]+dg[n-2]+2*mat1[n-2,2])),1))
                                                                    ty_me<-cbind(orjme,Intm_inf,Intm_sup)
 
                                                                    # enfant
-                                                                   orje<-c(1,exp(cof[2]+cof[n]));orjen<-round(orje,1)
-                                                                   Inte_inf=c(0,round(orje[2]*exp(-1.96*sqrt(dg[2]+dg[n]+2*mat1[n,2])),1))
-                                                                   Inte_sup=c(0,round(orje[2]*exp(1.96*sqrt(dg[2]+dg[n]+2*mat1[n,2])),1))
+                                                                   orje<-c(1,exp(cof[2]+cof[n-1]));orjen<-round(orje,1)
+                                                                   Inte_inf=c(0,round(orje[2]*exp(-1.96*sqrt(dg[2]+dg[n-1]+2*mat1[n-1,2])),1))
+                                                                   Inte_sup=c(0,round(orje[2]*exp(1.96*sqrt(dg[2]+dg[n-1]+2*mat1[n-1,2])),1))
                                                                    ty_en<-cbind(orjen,Inte_inf,Inte_sup)
 
                                                                    # or des interaction genotype mere expo
-                                                                   ORme<-round(c(1,exp(cof[n-1])),1)
-                                                                   IORme<-rbind(c(0,0),round(exp(Ic1)[n-1,],1))
+                                                                   ORme<-round(c(1,exp(cof[n-2])),1)
+                                                                   IORme<-rbind(c(0,0),round(exp(Ic1)[n-2,],1))
                                                                    ty_ORme<-cbind(ORme,IORme)
 
                                                                    # or des interaction genotype enfant expo
-                                                                   ORee<-round(c(1,exp(cof[n])),1)
-                                                                   IORee<-rbind(c(0,0),round(exp(Ic1)[n,],1))
+                                                                   ORee<-round(c(1,exp(cof[n-1])),1)
+                                                                   IORee<-rbind(c(0,0),round(exp(Ic1)[n-1,],1))
                                                                    ty_ORee<-cbind(ORee,IORee)
 
 
