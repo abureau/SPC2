@@ -1,6 +1,6 @@
 # Boucle d'analyse de tous les SNPs d'un gène
 
-     fct_gene_CMCM<-function(lis_dat,N,outc,vexp,vvaraj,vec.snp,seu=NULL)
+     fct_gene_CMCM<-function(lis_dat,N,outc,vexp,vvaraj,vec.snp,seu=NULL,minp=0.05)
                {#datCpx2 : base de cimplex; datId : la basee des id; datexp la base des exposants vec.snp vecteur de snp
                #nsnp<-names(datCpx2)[-1]
                # v_snp<-nsnp[regexpr("rs",nsnp)==-1]
@@ -11,7 +11,23 @@
                  Datd = Dat[!is.na(Dat[vexp]),]
                  gm<-paste("gme_","rs",substr(uu,3,nchar(uu)),sep="")
                  gc<-paste("gen_","rs",substr(uu,3,nchar(uu)),sep="")
-                 llR<-fct_Rsum_CMCM(Datd,N,outc,vexp,gm,gc,vvaraj,seu=seu);
+                                                    # le test pour mÃ¨re  
+                                                     gm_tt<-unlist(Datd[gm]);np<-nrow(Datd)
+                                                     n0<-length(gm_tt[gm_tt==0])
+                                                     n1<-length(gm_tt[gm_tt==1]);n2<-length(gm_tt[gm_tt==2])
+                                                     p<-(n2+(1/2)*n1)/np;
+                 if (p > minp) llR<-fct_Rsum_CMCM(Datd,N,outc,vexp,gm,gc,vvaraj,seu=seu)
+                 else {
+                   gma = paste("Cme_","rs",substr(uu,3,nchar(uu)),sep="")
+                   gca = paste("Cen_","rs",substr(uu,3,nchar(uu)),sep="")
+                   Cme = pmin(gm_tt,1)
+                   Cen = pmin(unlist(Datd[gc]),1)
+                   Datt = data.frame(Datd,Cme,Cen)
+                   names(Datt) = c(names(Datd),gma,gca)
+                   # Code de débuggage
+                   print(names(Datt))
+                   llR<-fct_Rsum_CMCM(Datt,N,outc,vexp,gm,gc,vvaraj,gma,gca,seu=seu);
+                   }
                  if (!all(is.na(llR$matR)))
                    {
                    Tab_Reg<-rbind(Tab_Reg,llR$matR);
