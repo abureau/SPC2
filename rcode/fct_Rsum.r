@@ -38,7 +38,7 @@ library(SPmlficmcm)
                                                                    if (inherits(mod0,"try-error"))  vgm1=NA
                                                                    else
                                                                      {
-                                                                   cof<-mod0$MatR[colnames(mod0$MatR)=="Estimate"]
+                                                                   cof<-mod0$MatR[,colnames(mod0$MatR)=="Estimate"]
                                                                    et<-mod0$MatR[,colnames(mod0$MatR)=="Std.Error"]
                                                                    Ic1<-cbind(cof-qnorm(1-alpha/2)*et, cof+qnorm(1-alpha/2)*et)
                                                                    # or et intervalle de confiance pour le model
