@@ -16,7 +16,7 @@ library(SPmlficmcm)
                                     }                                 
 # 1.11 La fonction qui resume pour un SNPs une seule exposition
 
-   fct_Rsum_CMCM<-function(dat,N,outc,vexp,gm,gc,vvaraj,gma=gm,gca=gc,seu=NULL,quant=0.75,typ=2,alpha=0.05){
+   fct_Rsum_CMCM<-function(dat,N,outc,vexp,gm,gc,vvaraj=NULL,gma=gm,gca=gc,seu=NULL,quant=0.75,typ=2,alpha=0.05){
                                             # dat la base de donnée deja juméllé au snp
                                             # snp le snp
                                             # la variable d'exposition
@@ -33,7 +33,10 @@ library(SPmlficmcm)
                                                                    #print(names(dat1))
                                                                    #print(gma)
                                                                    #print(gca)
-                                                                   fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))
+                                                                   if (!is.null(vvaraj))
+                                                                     fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))
+                                                                   else
+                                                                     fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep="")),collapse="+"),sep=""))  
                                                                    mod0<-try(Spmlficmcm(fl0,N,gma,gca,DatfE=dat1,typ=typ))
                                                                    if (inherits(mod0,"try-error"))  vgm1=NA
                                                                    else
@@ -93,7 +96,7 @@ library(SPmlficmcm)
                                                                    # recap
                                                                    vgm1<-cbind(tw,ty_w,twm,ty_me,twe,ty_en,ty_ORme,ty_ORee);
                                                                    colnames(vgm1)<-NULL;rownames(vgm1)<-NULL
-                                                                   nnc<-c("Cas1","Cont1","OR1","Ic1","Ic2","Cas2","Cont2","OR2","Ic1","Ic2","Cas3","Cont3","OR3","Ic1","Ic1","OR4","Ic1","Ic2","OR5","Ic1","Ic2")
+                                                                   nnc<-c("Cas1","Cont1","OR1","L1","U1","Cas2","Cont2","OR2","L2","U2","Cas3","Cont3","OR3","L3","U3","OR4","L4","U4","OR5","L5","U5")
                                                                    nnr<-c(paste(substr(gm,5,nchar(gm)),"_","Q1",sep=""),paste(substr(gm,5,nchar(gm)),"_","Q2",sep=""))
                                                                    colnames(vgm1)<-nnc
                                                                    rownames(vgm1)<-nnr
