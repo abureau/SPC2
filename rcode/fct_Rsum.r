@@ -16,7 +16,7 @@ library(SPmlficmcm)
                                     }                                 
 # 1.11 La fonction qui resume pour un SNPs une seule exposition
 
-   fct_Rsum_CMCM<-function(dat,N,outc,vexp,gm,gc,vvaraj=NULL,gma=gm,gca=gc,seu=NULL,quant=0.75,typ=2,alpha=0.05){
+   fct_Rsum_CMCM<-function(dat,N,outc,vexp,gm,gc,vvaraj=NULL,gma=gm,gca=gc,seu=NULL,quant=0.75,typ=2,alpha=0.05,...){
                                             # dat la base de donnée deja juméllé au snp
                                             # snp le snp
                                             # la variable d'exposition
@@ -37,7 +37,7 @@ library(SPmlficmcm)
                                                                      fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))
                                                                    else
                                                                      fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gma,gca),collapse="+"),paste(nch,":",gma,sep=""),paste(nch,":",gca,sep="")),collapse="+"),sep=""))  
-                                                                   mod0<-try(Spmlficmcm(fl0,N,gma,gca,DatfE=dat1,typ=typ))
+                                                                   mod0<-try(Spmlficmcm(fl0,N,gma,gca,DatfE=dat1,typ=typ,...))
                                                                    if (inherits(mod0,"try-error"))  vgm1=NA
                                                                    else
                                                                      {
