@@ -1,14 +1,15 @@
 # Boucle d'analyse de tous les SNPs d'un gène
 
-     fct_gene_CMCM<-function(lis_dat,N,outc,vexp,vvaraj,vec.snp,seu=NULL,minp=0.05)
+     fct_gene_CMCM<-function(lis_dat,N,outc,vexp,vvaraj,vec.snp,seu=NULL,minp=0.05,varexclu=NULL)
                {#datCpx2 : base de cimplex; datId : la basee des id; datexp la base des exposants vec.snp vecteur de snp
+               	# varexclu: variable déterminant les observations qu'on veut exclure
                #nsnp<-names(datCpx2)[-1]
                # v_snp<-nsnp[regexpr("rs",nsnp)==-1]
                i=1; Tab_Reg<-NULL;modl<-list();
                
                for(uu in vec.snp){
                  Dat=lis_dat[[uu]]
-                 Datd = Dat[!is.na(Dat[vexp]),]
+                 Datd = Dat[!(is.na(Dat[vexp])|is.na(Dat[varexclu])),]
                  gm<-paste("gme_","rs",substr(uu,3,nchar(uu)),sep="")
                  gc<-paste("gen_","rs",substr(uu,3,nchar(uu)),sep="")
                                                     # calcul de fréquence d'allèle  
@@ -38,15 +39,16 @@
                 return(list(Tab_Reg=Tab_Reg,modl=modl))
                 }
 
-     fct_gene<-function(lis_dat,outc,vexp,vvaraj,vec.snp,seu=NULL,minp=0.05)
+     fct_gene<-function(lis_dat,outc,vexp,vvaraj,vec.snp,seu=NULL,minp=0.05,varexclu=NULL)
                {#datCpx2 : base de cimplex; datId : la basee des id; datexp la base des exposants vec.snp vecteur de snp
+               	# varexclu: variable déterminant les observations qu'on veut exclure
                #nsnp<-names(datCpx2)[-1]
                # v_snp<-nsnp[regexpr("rs",nsnp)==-1]
                i=1; Tab_Reg<-NULL;modl<-list();
                
                for(uu in vec.snp){
                  Dat=lis_dat[[uu]]
-                 Datd = Dat[!is.na(Dat[vexp]),]
+                 Datd = Dat[!(is.na(Dat[vexp])|is.na(Dat[varexclu])),]
                  gm<-paste("gme_","rs",substr(uu,3,nchar(uu)),sep="")
                  gc<-paste("gen_","rs",substr(uu,3,nchar(uu)),sep="")
                                                     # calcul de fréquence d'allèle  
