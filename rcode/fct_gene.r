@@ -9,7 +9,13 @@
                
                for(uu in vec.snp){
                  Dat=lis_dat[[uu]]
-                 Datd = Dat[!(is.na(Dat[vexp])|is.na(Dat[varexclu])),]
+                 if (is.null(varexclu)) Datd = Dat[!is.na(Dat[vexp]),]    
+                 else
+                 {                
+                 if (varexclu %in% names(Dat))
+                   Datd = Dat[!(is.na(Dat[vexp])|is.na(Dat[varexclu])),]
+                 else Datd = Dat[!is.na(Dat[vexp]),]  
+                 }               
                  gm<-paste("gme_","rs",substr(uu,3,nchar(uu)),sep="")
                  gc<-paste("gen_","rs",substr(uu,3,nchar(uu)),sep="")
                                                     # calcul de fréquence d'allèle  
