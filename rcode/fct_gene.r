@@ -54,7 +54,13 @@
                
                for(uu in vec.snp){
                  Dat=lis_dat[[uu]]
-                 Datd = Dat[!(is.na(Dat[vexp])|is.na(Dat[varexclu])),]
+                 if (is.null(varexclu)) Datd = Dat[!is.na(Dat[vexp]),]    
+                 else
+                 {                
+                 if (varexclu %in% names(Dat))
+                   Datd = Dat[!(is.na(Dat[vexp])|is.na(Dat[varexclu])),]
+                 else Datd = Dat[!is.na(Dat[vexp]),]  
+                 }               
                  gm<-paste("gme_","rs",substr(uu,3,nchar(uu)),sep="")
                  gc<-paste("gen_","rs",substr(uu,3,nchar(uu)),sep="")
                                                     # calcul de fréquence d'allèle  
@@ -71,6 +77,45 @@
                    Datt = data.frame(Datd,Cme,Cen)
                    names(Datt) = c(names(Datd),gma,gca)
                    llR<-fct_Rsum(Datt,outc,vexp,gma,gca,vvaraj,seu);
+                   }
+                 Tab_Reg<-rbind(Tab_Reg,llR$matR);modl[[i]]<-llR$model1;
+                 i<-i+1
+                 }
+                return(list(Tab_Reg=Tab_Reg,modl=modl))
+                }
+
+     fct_gene_2exp_ordre2 <-function(lis_dat,outc,vexp,vexp2,vvaraj,vec.snp,seu=NULL,seu2=NULL,minp=0.05,varexclu=NULL)
+               {#datCpx2 : base de cimplex; datId : la basee des id; datexp la base des exposants vec.snp vecteur de snp
+               	# varexclu: variable déterminant les observations qu'on veut exclure
+               #nsnp<-names(datCpx2)[-1]
+               # v_snp<-nsnp[regexpr("rs",nsnp)==-1]
+               i=1; Tab_Reg<-NULL;modl<-list();
+               
+               for(uu in vec.snp){
+                 Dat=lis_dat[[uu]]
+                 if (is.null(varexclu)) Datd = Dat[!is.na(Dat[vexp]),]    
+                 else
+                 {                
+                 if (varexclu %in% names(Dat))
+                   Datd = Dat[!(is.na(Dat[vexp])|is.na(Dat[varexclu])),]
+                 else Datd = Dat[!is.na(Dat[vexp]),]  
+                 }               
+                 gm<-paste("gme_","rs",substr(uu,3,nchar(uu)),sep="")
+                 gc<-paste("gen_","rs",substr(uu,3,nchar(uu)),sep="")
+                                                    # calcul de fréquence d'allèle  
+                                                     gm_tt<-unlist(Datd[gm]);np<-nrow(Datd)
+                                                     n0<-length(gm_tt[gm_tt==0])
+                                                     n1<-length(gm_tt[gm_tt==1]);n2<-length(gm_tt[gm_tt==2])
+                                                     p<-(n2+(1/2)*n1)/np;
+                 if (p > minp) llR<-fct_Rsum_2exp_ordre2(Datd,outc,vexp,vexp2,gm,gc,vvaraj,seu,seu2)
+                 else {
+                   gma = paste("Cme_","rs",substr(uu,3,nchar(uu)),sep="")
+                   gca = paste("Cen_","rs",substr(uu,3,nchar(uu)),sep="")
+                   Cme = pmin(gm_tt,1)
+                   Cen = pmin(unlist(Datd[gc]),1)
+                   Datt = data.frame(Datd,Cme,Cen)
+                   names(Datt) = c(names(Datd),gma,gca)
+                   llR<-fct_Rsum_2exp_ordre2(Datt,outc,vexp,vexp2,gma,gca,vvaraj,seu,seu2);
                    }
                  Tab_Reg<-rbind(Tab_Reg,llR$matR);modl[[i]]<-llR$model1;
                  i<-i+1
