@@ -7,7 +7,10 @@
                  Datd = Dat[!is.na(Dat[vexp]),]
                  gm<-paste("gme_",uu,sep="")
                  gc<-paste("gen_",uu,sep="")
-					llR<-fct_Rsum(Datd,outc,vexp,gm,gc,vvaraj,seu)
+    # Inversion du codage du génotype de façon que 1 représente la présence d'une délétion
+    			 Datd[,gm] = 1 - Datd[,gm]
+    			 Datd[,gc] = 1 - Datd[,gc]   			 
+    			 llR<-fct_Rsum(Datd,outc,vexp,gm,gc,vvaraj,seu)
                  Tab_Reg<-rbind(Tab_Reg,llR$matR);modl[[i]]<-llR$model1;
                  i<-i+1
                  }
