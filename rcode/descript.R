@@ -5,7 +5,7 @@ fucomp_descC = function(dat,ve.vxp,vout){
                                                            tabdes<-rbind(tabdes,ll$vcfr1)
                                                            tabna<-rbind(tabna,ll$vc.na)
                                                            }
-                                        ncc<-c("Mean.cas","(sd)","nbr.na","Mean.controls","(sd)","nbr.na","p")
+                                        ncc<-c("Mean.cas","(sd)","nbr.na","Mean.controls","(sd)","3rd quartile","nbr.na","p")
                                         colnames(tabdes)<-ncc
                                         nam<-paste(ve.vxp,"(","z=1",")",sep="")
                                         rownames(tabdes)<-nam
@@ -22,7 +22,7 @@ desc_pvc = function(dat,vxp,vout){
                                    nbrt<-dim(dat0[is.na(dat0[,vxp])==TRUE,])[1]
 #                                   ttp = min(c(datcsna[,vxp]+0,datcona[,vxp]))
                                    ttp = wilcox.test(log(datcsna[,vxp]),log(datcona[,vxp]))$p.value
-                                   vcfr1<-c(mean(datcsna[,vxp]),sd(datcsna[,vxp]),nbrc,mean(datcona[,vxp]),sd(datcona[,vxp]),nbrt,ttp)
+                                   vcfr1<-c(mean(datcsna[,vxp]),sd(datcsna[,vxp]),nbrc,mean(datcona[,vxp]),sd(datcona[,vxp]),quantile(datcona[,vxp],0.75),nbrt,ttp)
                                    nbnac<-dim(dat1)[1]-dim(datcsna)[1]
                                    nbnco<-dim(dat0)[1]-dim(datcona)[1]
                                    vc.na<-c(nbnac,nbnco)
