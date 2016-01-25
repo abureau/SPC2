@@ -31,6 +31,7 @@ library(SPmlficmcm)
 if (missing(vvaraj)) fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gm,gc),collapse="+"),paste(nch,":",gm,sep=""),paste(nch,":",gc,sep="")),collapse="+"),sep=""))   
 else                                                                  fl0=formula(paste(outc,"~",paste(c(paste(c(nch,gm,gc),collapse="+"),paste(nch,":",gm,sep=""),paste(nch,":",gc,sep=""),paste(vvaraj,collapse="+")),collapse="+"),sep=""))   
                                                                    mod0<-glm(fl0,data=dat1,family=binomial)
+                                                                   smod<-summary(mod0)
                                                                    cof<-coef(mod0)
                                                                    Ic1<-confint(mod0)
                                                                    # or et intervalle de confiance pour le model
@@ -54,16 +55,21 @@ else                                                                  fl0=formul
                                                                    Inte_sup=c(0,round(orje[2]*exp(1.96*sqrt(dg[2]+dg[n]+2*mat1[n,2])),1))
                                                                    ty_en<-cbind(orjen,Inte_inf,Inte_sup)
                                                                    
-                                                                   # or des interaction genotype mere expo
+                                                                   # or de l'interaction genotype mere expo
                                                                    ORme<-round(c(1,exp(cof[n-1])),1)
                                                                    IORme<-rbind(c(0,0),round(exp(Ic1)[n-1,],1))
                                                                    ty_ORme<-cbind(ORme,IORme)
                                                                    
+                                                                   # p de l'interaction genotype mere expo
+                                                                   pinter_me = c(1,smod$coefficients[n-1,4])
+                                                                                                                                      
                                                                    # or des interaction genotype enfant expo
                                                                    ORee<-round(c(1,exp(cof[n])),1)
                                                                    IORee<-rbind(c(0,0),round(exp(Ic1)[n,],1))
                                                                    ty_ORee<-cbind(ORee,IORee)
                                                                    
+                                                                   # p de l'interaction genotype mere expo
+                                                                   pinter_ee = c(1,smod$coefficients[n,4])
                                                                    
                                                                    # la repartition 
                                                                     date1<-dat1[is.na(dat1[,vexp])!=TRUE,];nbr.na=dim(dat1[is.na(dat1[,vexp])==TRUE,])[1]
@@ -82,10 +88,10 @@ else                                                                  fl0=formul
                                                                    twe1<-c(dim(tage1[tage1[,dim(tage1)[2]]==1,])[1],dim(tage0[tage0[,dim(tage0)[2]]==1,])[1])
                                                                    twm<-rbind(twm0,twm1);twe<-rbind(twe0,twe1)
                                                                    # recap
-                                                                   vgm1<-cbind(tw,ty_w,twm,ty_me,twe,ty_en,ty_ORme,ty_ORee);
+                                                                   vgm1<-cbind(tw,ty_w,twm,ty_me,pinter_me,twe,ty_en,pinter_ee,ty_ORme,ty_ORee);
                                                                    colnames(vgm1)<-NULL;rownames(vgm1)<-NULL
                                                                    #nnc<-c("Cas1","Cont1","OR1","Ic1","Ic2","Cas2","Cont2","OR2","Ic1","Ic2","Cas3","Cont3","OR3","Ic1","Ic1","OR4","Ic1","Ic2","OR5","Ic1","Ic2")
-                                                                   nnc<-c("Cas1","Cont1","OR1","L1","U1","Cas2","Cont2","OR2","L2","U2","Cas3","Cont3","OR3","L3","U3","OR4","L4","U4","OR5","L5","U5")
+                                                                   nnc<-c("Cas1","Cont1","OR1","L1","U1","Cas2","Cont2","OR2","L2","U2","pI2v1","Cas3","Cont3","OR3","L3","U3","pI3v1","OR4","L4","U4","OR5","L5","U5")
                                                                    nnr<-c(paste(substr(gm,5,nchar(gm)),"_","Q1",sep=""),paste(substr(gm,5,nchar(gm)),"_","Q2",sep=""))
                                                                    colnames(vgm1)<-nnc
                                                                    rownames(vgm1)<-nnr
