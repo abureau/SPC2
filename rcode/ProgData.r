@@ -190,7 +190,22 @@
                                            }
 
 # 1.7 La fonction qui prepare toutes les tables et les concerve dans une liste 
- # 1.7.1 conserve les tables avec avec les données mananquantes sur le génotype de l'enfant  
+ # Conserve les tables avec les données mananquantes sur le génotype de l'enfant et de la m�re
+        latSnptout<-function(dat1,dat2,vec.rsn,datz){
+                                           #dat1 : data.frame obtenue à partir de transfer
+                                           #dat2 : data.frame des id mere enfant
+                                           #vec.rsn : vecteur des snp
+                                           # datz : data.frame des covariable 
+                                           listSNP<-list()
+                                           i=1;
+                                           for(ss in vec.rsn){ # debugging code
+                                                              print(ss)
+                                                              tab<-fct_mergtt(dat1,dat2,ss,datz)
+                                                              listSNP[[i]]<-tab[tab["test"]!=90,];i=i+1}
+                                           names(listSNP)<-vec.rsn
+                                           return(listSNP)
+                                           }
+ # 1.7.1 conserve les tables avec les données mananquantes sur le génotype de l'enfant  
         latSnpWMV<-function(dat1,dat2,vec.rsn,datz){
                                            #dat1 : data.frame obtenue à partir de transfer
                                            #dat2 : data.frame des id mere enfant
